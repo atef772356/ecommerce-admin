@@ -4,7 +4,8 @@ import prismadb from "../../../../../../lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ categoryId: string }> },
+  // 💡 التعديل هنا: ضفنا storeId عشان الـ TypeScript ميزعلش
+  { params }: { params: Promise<{ storeId: string; categoryId: string }> },
 ) {
   try {
     const resolvedParams = await params;
