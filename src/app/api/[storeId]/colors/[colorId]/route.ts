@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-// 👇 5 خطوات للخلف للوصول لمجلد lib
-
 import prismadb from "../../../../../../lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ colorId: string }> },
+  // 💡 التعديل هنا: ضفنا storeId عشان يطابق مسار المجلدات
+  { params }: { params: Promise<{ storeId: string; colorId: string }> },
 ) {
   try {
     const { colorId } = await params;
