@@ -4,7 +4,8 @@ import prismadb from "../../../../../../lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ productId: string }> },
+  // 💡 التعديل هنا: ضفنا storeId عشان يطابق مسار المجلدات الأبوية
+  { params }: { params: Promise<{ storeId: string; productId: string }> },
 ) {
   try {
     const { productId } = await params;
@@ -135,7 +136,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    // أولاً: بنحدث بيانات المنتج الأساسية وبنحذف كل الصور القديمة المرتبطة بيه
+    // أولاً: بنحدث بيانات المنتج الأساسية وبنحذف كل الصور القديمة
     await prismadb.product.update({
       where: {
         id: productId,
@@ -154,7 +155,7 @@ export async function PATCH(
       },
     });
 
-    // ثانياً: بنضيف الصور الجديدة اللي جاتلنا من الواجهة
+    // ثانياً: بنضيف الصور الجديدة
     const product = await prismadb.product.update({
       where: {
         id: productId,
