@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server"; // تأكد من الاستيراد حسب نسختك
+import { auth } from "@clerk/nextjs/server";
 
 import prismadb from "../../../../../lib/prismadb";
 
 // 1. إنشاء لوحة (POST)
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ storeId: string }> } },
+  // 💡 اتصلحت: شلنا القوس الزيادة
+  { params }: { params: Promise<{ storeId: string }> }
 ) {
   try {
     const { userId } = await auth();
-const { storeId } = await params;
+    // 💡 اتصلحت: استدعيناها مرة واحدة بس
+    const { storeId } = await params;
+    
     const body = await req.json();
     const { label, imageUrl } = body;
-
-    const { storeId } = await params;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -61,10 +62,10 @@ const { storeId } = await params;
 }
 
 // 2. جلب جميع اللوحات (GET)
-// هذه الدالة ستكون عامة (Public) لعرض اللوحات في المتجر لاحقاً
 export async function GET(
   req: Request,
-  { params }: { params: { storeId: string } },
+  // 💡 اتصلحت: ضفنا الـ Promise هنا
+  { params }: { params: Promise<{ storeId: string }> }
 ) {
   try {
     const { storeId } = await params;
