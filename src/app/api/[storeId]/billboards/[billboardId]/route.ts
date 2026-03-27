@@ -6,7 +6,8 @@ import prismadb from "../../../../../../lib/prismadb";
 // GET (Single Billboard)
 export async function GET(
   req: Request,
-  { params }: { params: { billboardId: string } },
+  // 💡 التعديل هنا: ضفنا Promise و storeId
+  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
 ) {
   try {
     const { billboardId } = await params;
@@ -31,7 +32,8 @@ export async function GET(
 // DELETE
 export async function DELETE(
   req: Request,
-  { params }: { params: { billboardId: string; storeId: string } },
+  // 💡 التعديل هنا: ضفنا Promise
+  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -73,7 +75,8 @@ export async function DELETE(
 // PATCH (Update)
 export async function PATCH(
   req: Request,
-  { params }: { params: { billboardId: string; storeId: string } },
+  // 💡 التعديل هنا: ضفنا Promise
+  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
 ) {
   try {
     const { userId } = await auth();
