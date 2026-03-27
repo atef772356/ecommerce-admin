@@ -1,23 +1,22 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server"; // أو @clerk/nextjs حسب نسختك
+import { auth } from "@clerk/nextjs/server";
 
 import prismadb from "../../../../../lib/prismadb";
 
 // 1. دالة التعديل (PATCH)
 export async function PATCH(
   req: Request,
-  { params }: { params: { storeId: string } },
+  // 💡 التعديل هنا: ضفنا Promise في تعريف النوع
+  { params }: { params: Promise<{ storeId: string }> },
 ) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-
     const { name } = body;
 
-    // بما أننا في Next.js 15 قد نحتاج لانتظار البراميترز
+    // فك الـ Promise
     const { storeId } = await params;
 
-    // --- منطقة التحقق (Validation) ---
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
@@ -29,10 +28,8 @@ export async function PATCH(
     if (!storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
-    // -------------------------------
 
-    // --- التنفيذ (Update) ---
-    // شرط مهم جداً: نحدث المتجر فقط إذا كان الـ id صحيحاً والـ userId يطابق المالك
+    // نحدث المتجر فقط إذا كان الـ id والـ userId يطابق المالك
     const store = await prismadb.store.updateMany({
       where: {
         id: storeId,
@@ -53,12 +50,11 @@ export async function PATCH(
 // 2. دالة الحذف (DELETE)
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeId: string } },
+  // 💡 التعديل هنا كمان: ضفنا Promise
+  { params }: { params: Promise<{ storeId: string }> },
 ) {
   try {
     const { userId } = await auth();
-
-    // انتظار البراميترز
     const { storeId } = await params;
 
     if (!userId) {
@@ -69,8 +65,6 @@ export async function DELETE(
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    // --- التنفيذ (Delete) ---
-    // نحذف فقط إذا كنت أنت المالك
     const store = await prismadb.store.deleteMany({
       where: {
         id: storeId,
