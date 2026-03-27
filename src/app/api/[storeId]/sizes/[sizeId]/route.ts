@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-// 👇 هنا رجعنا 5 خطوات للخلف لأننا دخلنا مجلد أعمق
 import prismadb from "../../../../../../lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ sizeId: string }> },
+  // 💡 التعديل هنا: ضفنا storeId عشان يطابق مسار المجلدات الأبوية
+  { params }: { params: Promise<{ storeId: string; sizeId: string }> },
 ) {
   try {
     const { sizeId } = await params;
