@@ -6,11 +6,11 @@ import prismadb from "../../../../../lib/prismadb";
 // 1. إنشاء لوحة (POST)
 export async function POST(
   req: Request,
-  { params }: { params: { storeId: string } },
+  { params }: { params: Promise<{ storeId: string }> } },
 ) {
   try {
     const { userId } = await auth();
-
+const { storeId } = await params;
     const body = await req.json();
     const { label, imageUrl } = body;
 
