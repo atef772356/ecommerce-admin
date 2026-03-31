@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 // GET (Single Billboard)
 export async function GET(
-  req: Request,
+  req: Request,context: any
   // 💡 التعديل هنا: ضفنا Promise و storeId
   { params }: { params: Promise<{ storeId: string; billboardId: string }> },
 ) {
