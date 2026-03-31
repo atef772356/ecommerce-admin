@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import prismadb from "../../../../../../lib/prismadb";
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 // GET (Single Billboard)
 export async function GET(
   req: Request,
