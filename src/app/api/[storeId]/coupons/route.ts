@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 // 💡 تصريح المرور السحري (CORS) عشان المتجر يقدر يكلم الداشبورد
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
