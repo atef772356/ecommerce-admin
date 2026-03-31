@@ -81,8 +81,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   
   // 💡 التعديل هنا: ضفنا <ProductFormValues> عشان المفتش يعرف نوع البيانات
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(formSchema),
+const form = useForm<ProductFormValues>({
+    // 💡 التعديل السحري هنا: ضفنا as any عشان نحل الخناقة بين Zod و TypeScript
+    resolver: zodResolver(formSchema) as any,
     defaultValues: initialData
       ? {
           name: initialData.name,
@@ -105,7 +106,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           isArchived: false,
         },
   });
-
   // 2. حددنا النوع بصرامة هنا عشان وقت الـ Submit نكون متأكدين من البيانات
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
