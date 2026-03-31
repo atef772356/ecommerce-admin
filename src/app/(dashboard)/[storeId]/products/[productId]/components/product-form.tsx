@@ -79,9 +79,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
-  // 👈 ربطنا الـ form بالنوع اللي عرفناه فوق
-  // 1. شيلنا النوع الصريح من هنا وسيبنا useForm تستنتجه من الـ resolver
-  const form = useForm({
+  
+  // 💡 التعديل هنا: ضفنا <ProductFormValues> عشان المفتش يعرف نوع البيانات
+  const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
       ? {
