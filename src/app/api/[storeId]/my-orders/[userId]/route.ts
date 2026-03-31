@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prismadb from "../../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
