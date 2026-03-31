@@ -2,16 +2,19 @@
 
 import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { Billboard } from "@prisma/client";
+// 💡 التعديل 1: مسحنا استيراد Billboard بتاع Prisma
 
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 
+// 💡 التعديل 2: استوردنا النوع الصح من ملف الـ columns
+import { columns, BillboardColumn } from "./columns";
+
 interface BillboardClientProps {
-  data: Billboard[];
+  // 💡 التعديل 3: غيرنا النوع من Billboard لـ BillboardColumn
+  data: BillboardColumn[];
 }
 
 export const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
