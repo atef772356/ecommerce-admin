@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 export async function GET(
   req: Request,
   // 💡 التعديل هنا: ضفنا storeId عشان الـ TypeScript ميزعلش
