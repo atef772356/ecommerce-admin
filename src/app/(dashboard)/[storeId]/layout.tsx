@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server"; // أو "@clerk/nextjs/server" في النسخ الجديدة
+import { auth } from "@clerk/nextjs/server";
 
 import prismadb from "../../../../lib/prismadb";
 import Navbar from "@/components/navbar";
@@ -9,10 +9,14 @@ export default async function DashboardLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { storeId: string };
+  // 💡 التعديل 1: خلينا الـ params عبارة عن Promise
+  params: Promise<{ storeId: string }>;
 }) {
   // 1. من هو المستخدم؟
   const { userId } = await auth();
+
+  // 💡 التعديل 2: فكينا الـ Promise واستنينا الـ storeId
+  const { storeId } = await params;
 
   // 2. إذا لم يسجل دخول، ارسله لصفحة التسجيل
   if (!userId) {
@@ -22,7 +26,7 @@ export default async function DashboardLayout({
   // 3. هل هذا المتجر موجود فعلاً؟ وهل يملكه هذا المستخدم؟
   const store = await prismadb.store.findFirst({
     where: {
-      id: params.storeId, // نبحث برقم المتجر الموجود في الرابط
+      id: storeId, // 💡 استخدمنا الـ storeId اللي استخرجناه فوق
       userId, // ونتأكد أن الـ userId مطابق لصاحب المتجر
     },
   });
