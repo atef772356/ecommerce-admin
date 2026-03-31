@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import prismadb from "../../../../../lib/prismadb";
 import { stripe } from "../../../../../lib/stripe";
-
+export const dynamic = "force-dynamic";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
