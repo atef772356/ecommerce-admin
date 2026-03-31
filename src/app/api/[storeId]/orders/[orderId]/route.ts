@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ storeId: string; orderId: string }> },
