@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
 import prismadb from "../../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 // GET (Single Billboard)
 export async function GET(
   req: Request,
