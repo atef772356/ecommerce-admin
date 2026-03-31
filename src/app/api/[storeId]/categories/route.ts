@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 // 1. إنشاء فئة جديدة (POST)
 export async function POST(
   req: Request,
