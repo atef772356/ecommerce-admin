@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { stripe } from "../../../../lib/stripe";
 import prismadb from "../../../../lib/prismadb";
-
+export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const body = await req.text();
 
