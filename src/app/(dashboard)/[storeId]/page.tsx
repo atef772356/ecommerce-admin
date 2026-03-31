@@ -10,18 +10,25 @@ import { formatter } from "../../../../lib/utils";
 
 import { Overview } from "@/components/overview";
 import { getGraphRevenue } from "../../../../actions/get-graph-revenue";
+
 interface DashboardPageProps {
-  params: {
+  // 💡 التعديل 1: حولنا الـ params لـ Promise
+  params: Promise<{
     storeId: string;
-  };
+  }>;
 }
 
-const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
-  // سحب البيانات من الداتا بيز باستخدام الـ Actions
-  const totalRevenue = await getTotalRevenue(params.storeId);
-  const salesCount = await getSalesCount(params.storeId);
-  const stockCount = await getStockCount(params.storeId);
-  const graphRevenue = await getGraphRevenue(params.storeId);
+// 💡 التعديل 2: شلنا React.FC وخليناها دالة async عادية جداً
+export default async function DashboardPage({ params }: DashboardPageProps) {
+  // 💡 التعديل 3: استنينا الـ Promise عشان نطلع منه الـ storeId
+  const { storeId } = await params;
+
+  // سحب البيانات من الداتا بيز باستخدام الـ Actions (بالـ storeId الجديد)
+  const totalRevenue = await getTotalRevenue(storeId);
+  const salesCount = await getSalesCount(storeId);
+  const stockCount = await getStockCount(storeId);
+  const graphRevenue = await getGraphRevenue(storeId);
+
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
@@ -68,6 +75,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
               <div className="text-2xl font-bold">{stockCount}</div>
             </CardContent>
           </Card>
+          
           <Card className="col-span-4 mt-4">
             <CardHeader>
               <CardTitle>Overview</CardTitle>
@@ -80,6 +88,4 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
       </div>
     </div>
   );
-};
-
-export default DashboardPage;
+}
