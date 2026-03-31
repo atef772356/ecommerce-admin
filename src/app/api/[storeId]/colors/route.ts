@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../lib/prismadb";
 
 // 👇 4 خطوات للخلف للوصول لمجلد lib
-
+export const dynamic = "force-dynamic";
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ storeId: string }> },
