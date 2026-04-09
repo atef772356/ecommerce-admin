@@ -4,14 +4,12 @@ import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../../lib/prismadb";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
 // GET (Single Billboard)
-export async function GET(
-  req: Request,context: any
-  // 💡 التعديل هنا: ضفنا Promise و storeId
-  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
-) {
+export async function GET(req: Request, context: any) {
   try {
-    const { billboardId } = await params;
+    const params = await context.params;
+    const { billboardId } = params;
 
     if (!billboardId) {
       return new NextResponse("Billboard id is required", { status: 400 });
@@ -31,14 +29,11 @@ export async function GET(
 }
 
 // DELETE
-export async function DELETE(
-  req: Request,
-  // 💡 التعديل هنا: ضفنا Promise
-  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
-) {
+export async function DELETE(req: Request, context: any) {
   try {
     const { userId } = await auth();
-    const { billboardId, storeId } = await params;
+    const params = await context.params;
+    const { billboardId, storeId } = params;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -74,16 +69,14 @@ export async function DELETE(
 }
 
 // PATCH (Update)
-export async function PATCH(
-  req: Request,
-  // 💡 التعديل هنا: ضفنا Promise
-  { params }: { params: Promise<{ storeId: string; billboardId: string }> },
-) {
+export async function PATCH(req: Request, context: any) {
   try {
     const { userId } = await auth();
     const body = await req.json();
     const { label, imageUrl } = body;
-    const { billboardId, storeId } = await params;
+    
+    const params = await context.params;
+    const { billboardId, storeId } = params;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
