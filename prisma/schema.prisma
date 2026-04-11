@@ -26,16 +26,16 @@ enum OrderStatus {
 
 // 👤 جدول المستخدمين (تجار وعملاء)
 model User {
-  id            String     @id @default(uuid())
-  externalId    String     @unique // ID from Auth Provider (Clerk/NextAuth)
-  email         String     @unique
-  name          String?
-  role          Role       @default(CUSTOMER)
-  orders        Order[]
-  reviews       Review[]
-  wishlist      Wishlist[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id          String     @id @default(uuid())
+  externalId  String     @unique // ID from Auth Provider (Clerk/NextAuth)
+  email       String     @unique
+  name        String?
+  role        Role       @default(CUSTOMER)
+  orders      Order[]
+  reviews     Review[]
+  wishlist    Wishlist[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 // 🏪 جدول المتاجر (للتجار)
@@ -45,8 +45,7 @@ model Store {
   userId      String      // ID of the Seller
   billboards  Billboard[] @relation("StoreToBillboard")
   categories  Category[]  @relation("StoreToCategory")
-  sizes       Size[]      @relation("StoreToSize")
-  colors      Color[]     @relation("StoreToColor")
+  // 💡 مسحنا علاقات Size و Color من هنا
   products    Product[]   @relation("StoreToProduct")
   orders      Order[]     @relation("StoreToOrder")
   coupons     Coupon[]    @relation("StoreToCoupon")
@@ -82,31 +81,8 @@ model Category {
   @@index([billboardId])
 }
 
-model Size {
-  id          String    @id @default(uuid())
-  storeId     String
-  store       Store     @relation("StoreToSize", fields: [storeId], references: [id])
-  name        String
-  value       String
-  products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([storeId])
-}
-
-model Color {
-  id          String    @id @default(uuid())
-  storeId     String
-  store       Store     @relation("StoreToColor", fields: [storeId], references: [id])
-  name        String
-  value       String
-  products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([storeId])
-}
+// 💡 مسحنا موديل Size بالكامل من هنا
+// 💡 مسحنا موديل Color بالكامل من هنا
 
 model Product {
   id          String      @id @default(uuid())
@@ -120,10 +96,7 @@ model Product {
   stock       Int         @default(10) // 📦 المخزون
   isFeatured  Boolean     @default(false)
   isArchived  Boolean     @default(false) // 🗑️ أرشفة المنتج بدل مسحه
-  sizeId      String
-  size        Size        @relation(fields: [sizeId], references: [id])
-  colorId     String
-  color       Color       @relation(fields: [colorId], references: [id])
+  // 💡 مسحنا sizeId و colorId من هنا
   images      Image[]     @relation("ProductToImage")
   orderItems  OrderItem[]
   reviews     Review[]    
@@ -133,8 +106,7 @@ model Product {
 
   @@index([storeId])
   @@index([categoryId])
-  @@index([sizeId])
-  @@index([colorId])
+  // 💡 مسحنا الـ Indexes بتاعة اللون والمقاس من هنا
 }
 
 model Image {
@@ -148,7 +120,7 @@ model Image {
   @@index([productId])
 }
 
-// 🧾 جدول الطلبات (تم تحديثه)
+// 🧾 جدول الطلبات
 model Order {
   id          String      @id @default(uuid())
   storeId     String
@@ -201,15 +173,15 @@ model Coupon {
 
 // ⭐ جدول التقييمات
 model Review {
-  id          String   @id @default(uuid())
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  rating      Int      
-  comment     String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int      
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([productId])
   @@index([userId])
@@ -217,12 +189,12 @@ model Review {
 
 // ❤️ جدول المفضلة
 model Wishlist {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([userId, productId]) // عشان العميل ميضفش نفس المنتج مرتين
   @@index([userId])
