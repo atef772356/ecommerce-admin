@@ -18,32 +18,21 @@ const ProductPage = async ({
     },
   });
 
-  // بنجيب كل الفئات والأحجام والألوان عشان نعرضهم في قوائم الاختيار (Select)
+  // بنجيب كل الفئات عشان نعرضهم في قوائم الاختيار (Select)
   const categories = await prismadb.category.findMany({
     where: {
       storeId,
     },
   });
 
-  const sizes = await prismadb.size.findMany({
-    where: {
-      storeId,
-    },
-  });
-
-  const colors = await prismadb.color.findMany({
-    where: {
-      storeId,
-    },
-  });
+  // 💡 مسحنا جلب الألوان والمقاسات من هنا عشان معدناش محتاجينهم
 
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <ProductForm
           categories={categories}
-          colors={colors}
-          sizes={sizes}
+          // 💡 مسحنا تمرير الألوان والمقاسات للفورمة
           initialData={product}
         />
       </div>
