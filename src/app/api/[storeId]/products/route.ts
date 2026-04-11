@@ -2,23 +2,19 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "../../../../../lib/prismadb";
 
-// عدل مسار الاستيراد ده لو ملف prismadb عندك في مكان تاني
 export const dynamic = "force-dynamic";
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ storeId: string }> },
-) {
+
+export async function POST(req: Request, context: any) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const { storeId } = await params;
+    const params = await context.params;
+    const { storeId } = params;
 
     const {
       name,
       price,
       categoryId,
-      colorId,
-      sizeId,
       images,
       isFeatured,
       isArchived,
@@ -44,14 +40,6 @@ export async function POST(
       return new NextResponse("Category id is required", { status: 400 });
     }
 
-    if (!colorId) {
-      return new NextResponse("Color id is required", { status: 400 });
-    }
-
-    if (!sizeId) {
-      return new NextResponse("Size id is required", { status: 400 });
-    }
-
     if (!storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -67,7 +55,6 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    // هنا السحر: بننشئ المنتج وبنربط معاه الصور في خطوة واحدة
     const product = await prismadb.product.create({
       data: {
         name,
@@ -75,8 +62,6 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        colorId,
-        sizeId,
         storeId,
         images: {
           createMany: {
@@ -93,39 +78,46 @@ export async function POST(
   }
 }
 
-export async function GET(
-  req: Request,
-  // 👇 النوع الصحيح والمضبوط 100% لنسخ Next.js الجديدة
-  { params }: { params: Promise<{ storeId: string }> },
-) {
+export async function GET(req: Request, context: any) {
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
+    
+    // 💡 الفلاتر الجديدة
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const sort = searchParams.get("sort");
 
-    // 👈 بنستنى الـ Promise عشان نفكه وناخد منه الـ storeId
-    const resolvedParams = await params;
+    const params = await context.params;
+    const { storeId } = params;
 
-    if (!resolvedParams.storeId) {
+    if (!storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
 
+    // 💡 إعداد ترتيب المنتجات
+    let orderBy: any = { createdAt: "desc" };
+    if (sort === "price-asc") orderBy = { price: "asc" };
+    if (sort === "price-desc") orderBy = { price: "desc" };
+
     const products = await prismadb.product.findMany({
       where: {
-        storeId: resolvedParams.storeId,
+        storeId,
         categoryId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
+        // 💡 فلترة السعر
+        price: {
+          gte: minPrice ? parseFloat(minPrice) : undefined,
+          lte: maxPrice ? parseFloat(maxPrice) : undefined,
+        }
       },
       include: {
         images: true,
         category: true,
-        color: true,
-        size: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy,
     });
 
     return NextResponse.json(products);
