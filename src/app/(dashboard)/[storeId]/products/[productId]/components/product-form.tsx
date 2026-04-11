@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
-import { Category, Color, Image, Product, Size } from "@prisma/client";
+import { Category, Image, Product } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -42,13 +42,10 @@ const formSchema = z.object({
     .min(1, { message: "At least one image is required" }),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
-  colorId: z.string().min(1),
-  sizeId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
 });
 
-// 👈 هنا بنعرف النوع صراحة عشان الـ form والـ onSubmit يقرأوا نفس البيانات
 type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
@@ -58,15 +55,11 @@ interface ProductFormProps {
       })
     | null;
   categories: Category[];
-  colors: Color[];
-  sizes: Size[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
-  sizes,
-  colors,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -79,10 +72,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
-  
-  // 💡 التعديل هنا: ضفنا <ProductFormValues> عشان المفتش يعرف نوع البيانات
-const form = useForm<ProductFormValues>({
-    // 💡 التعديل السحري هنا: ضفنا as any عشان نحل الخناقة بين Zod و TypeScript
+  const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: initialData
       ? {
@@ -90,8 +80,6 @@ const form = useForm<ProductFormValues>({
           images: initialData.images.map((image) => ({ url: image.url })),
           price: parseFloat(String(initialData.price)),
           categoryId: initialData.categoryId,
-          colorId: initialData.colorId,
-          sizeId: initialData.sizeId,
           isFeatured: initialData.isFeatured,
           isArchived: initialData.isArchived,
         }
@@ -100,13 +88,11 @@ const form = useForm<ProductFormValues>({
           images: [],
           price: 0,
           categoryId: "",
-          colorId: "",
-          sizeId: "",
           isFeatured: false,
           isArchived: false,
         },
   });
-  // 2. حددنا النوع بصرامة هنا عشان وقت الـ Submit نكون متأكدين من البيانات
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
@@ -127,6 +113,7 @@ const form = useForm<ProductFormValues>({
       setLoading(false);
     }
   };
+
   const onDelete = async () => {
     try {
       setLoading(true);
@@ -250,68 +237,6 @@ const form = useForm<ProductFormValues>({
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="sizeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Size</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
-                          {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="colorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a color"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem key={color.id} value={color.id}>
-                          {color.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
