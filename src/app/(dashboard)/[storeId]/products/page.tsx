@@ -4,7 +4,7 @@ import { ProductColumn } from "./components/columns";
 import prismadb from "../../../../../lib/prismadb";
 import { ProductClient } from "./components/client";
 
-// دالة بسيطة لتنسيق السعر (عشان يظهر كعملة $ مثلاً)
+// دالة بسيطة لتنسيق السعر
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -17,15 +17,13 @@ const ProductsPage = async ({
 }) => {
   const { storeId } = await params;
 
-  // هنجيب المنتجات ومعاها الفئة والحجم واللون عشان نعرض أسمائهم في الجدول
+  // هنجيب المنتجات ومعاها الفئة بس
   const products = await prismadb.product.findMany({
     where: {
       storeId,
     },
     include: {
       category: true,
-      size: true,
-      color: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -37,10 +35,8 @@ const ProductsPage = async ({
     name: item.name,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
-    price: formatter.format(item.price.toNumber()), // بنحول السعر لرقم وننسقه
+    price: formatter.format(item.price.toNumber()), 
     category: item.category.name,
-    size: item.size.name,
-    color: item.color.value,
     createdAt: format(item.createdAt, "MMMM do, yyyy"),
   }));
 
