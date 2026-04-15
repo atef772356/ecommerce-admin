@@ -10,7 +10,7 @@ import { formatter } from "../../../../lib/utils";
 
 import { Overview } from "@/components/overview";
 import { getGraphRevenue } from "../../../../actions/get-graph-revenue";
-
+import { withRetry } from "@/utils/dbRetry";
 interface DashboardPageProps {
   // 💡 التعديل 1: حولنا الـ params لـ Promise
   params: Promise<{
@@ -24,11 +24,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const { storeId } = await params;
 
   // سحب البيانات من الداتا بيز باستخدام الـ Actions (بالـ storeId الجديد)
-  const totalRevenue = await getTotalRevenue(storeId);
-  const salesCount = await getSalesCount(storeId);
-  const stockCount = await getStockCount(storeId);
-  const graphRevenue = await getGraphRevenue(storeId);
-
+const totalRevenue = await withRetry(() => getTotalRevenue(storeId));
+  const salesCount = await withRetry(() => getSalesCount(storeId));
+  const stockCount = await withRetry(() => getStockCount(storeId));
+  const graphRevenue = await withRetry(() => getGraphRevenue(storeId));
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
