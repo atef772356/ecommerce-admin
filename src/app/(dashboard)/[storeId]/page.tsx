@@ -10,7 +10,7 @@ import { formatter } from "../../../../lib/utils";
 
 import { Overview } from "@/components/overview";
 import { getGraphRevenue } from "../../../../actions/get-graph-revenue";
-import { withRetry } from "../../../../lib/utils";
+import { withRetry } from "../../../../lib/dbRetry";
 interface DashboardPageProps {
   // 💡 التعديل 1: حولنا الـ params لـ Promise
   params: Promise<{
